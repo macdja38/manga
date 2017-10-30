@@ -1,0 +1,138 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    max-height: 100vh;
+}
+
+div, form {
+    border: 1px solid black;
+}
+
+#searchContainer {
+    height: 10vh;
+    grid-column: 1 / 5;
+    grid-row: 1;
+}
+
+#mangaInfo {
+    height: 90vh;
+    grid-column: 3 / 5;
+    grid-row: 2;
+}
+
+#mangaSelect {
+    height: 90vh;
+    overflow-y: scroll;
+    grid-column: 1 / 3;
+    grid-row: 2;
+}
+
+#imgDetails {
+    height: 30%;
+    display: grid;
+    grid-template-columns: 40% 60%;
+    grid-template-rows: repeat(4, 25%);
+}
+
+#imageContainer, #genreDescription {
+    display: inline-block;
+    height: 100%;
+}
+
+#imageContainer {
+    grid-column: 1;
+    grid-row: 1 / 5;
+}
+
+#imgDetails img {
+    max-height: 100%;
+    max-width: 100%;
+}
+
+#genres {
+    font-size: small;
+    overflow-x: scroll;
+    width: 100%;
+}
+
+#mangaTitle {
+    grid-column: 2;
+    grid-row: 1;
+    overflow-y: scroll;
+}
+
+#mangaDescription {
+    font-size: smaller;
+    overflow-y: scroll;
+    max-height: 100%;
+    width: 100%;
+}
+
+#downloadForm {
+    height: 70%;
+}
+
+div.chapterSelect {
+    height: 90%;
+}
+
+#chapterList {
+    display: block;
+    overflow-y: scroll;
+}
+
+#chapterListContainer {
+    display: grid;
+    grid-template-rows: 0.1fr 1.9fr;
+    max-height: 100%;
+}
+
+#chapterListTitle {
+    grid-row: 1;
+}
+
+#ulDiv {
+    display: block;
+    overflow-y: scroll;
+    max-height: 100%;
+    grid-row: 2;
+}
+#spanSelectAll {
+    font-size: small;
+    position: relative;
+    left: 30%;
+}
+
+#submit {
+    display: inline-block;
+    height: 100%;
+    width: 50%;
+}
+
+#downloadTypeContainer {
+    width: 50%;
+    display: inline-flex;
+}
+
+div.radio {
+    width: 50%;
+    text-align: center;
+}
+
+div.submit {
+    height: 10%;
+    width: 100%;
+    display: inline-flex;
+}
+
+#genreDescription {
+    display: grid;
+    grid-column: 2;
+    grid-row: 2 / 5;
+}

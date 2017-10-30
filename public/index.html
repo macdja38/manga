@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/public/main.css">
+    <title>manga</title>
+</head>
+<body>
+    <div id="searchContainer">
+            <select name="site" id="site">
+                <option value="mangafox">MangaFox</option>
+                <option value="mangapanda">MangaPanda</option>
+                <option value="mangahere">MangaHere</option>
+                <option value="kissmanga">KissManga</option>
+                <option value="batoto">Batoto</option>
+            </select>
+            <input type="text" name="searchText" id="searchText" placeholder="Search manga..." />
+            <input type="button" name="searchButton" id="searchButton" value="Search" />
+    </div>
+    <form id="mangaSelect">
+        <h1>Results</h1>
+        <table id="results"></table>
+    </form>
+    <div id="mangaInfo">
+        <div id="imgDetails">
+            <h3 id="mangaTitle"></h3>
+            <div id="imageContainer"></div>
+            <div id="genreDescription">
+                <p id="genres"></p>
+                <p id="mangaDescription"></p>
+            </div>
+        </div>
+        <form id="downloadForm" name="downloadForm" action="/" method="post">
+            <input type="hidden" name="downloadSite" id="downloadSite" />
+            <input type="hidden" name="downloadName" id="downloadName" />
+            <div class="chapterSelect">
+                <div id="chapterListContainer">
+                    <h2 id="chapterListTitle">Chapters<span id="spanSelectAll"><input type="checkbox" id="selectAll" /><label for="selectAll">Select All</label></span></h2>
+                    <div id="ulDiv">
+                        <ul id="chapterList"></ul>
+                    </div>
+                </div>
+            </div>
+            <div class="submit">
+                <input type="submit" id="submit" value="Download" />
+                <div id="downloadTypeContainer">
+                    <div class="radio">
+                        <input type="radio" name="downloadType" id="epub" value="epub" checked>
+                        <label for="epub">epubs</label>
+                    </div>
+                    <div class="radio">
+                        <input type="radio" name="downloadType" id="img" value="img">
+                        <label for="img">images</label>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script type="application/javascript" src="./public/index.js"></script>
+</body>
+</html>
