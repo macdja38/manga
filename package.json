@@ -4,6 +4,7 @@
   "description": "Downloads manga and outputs epub",
   "main": "www.js",
   "dependencies": {
+    "archiver": "^2.1.0",
     "body-parser": "^1.18.2",
     "dotenv": "^4.0.0",
     "epub-comic-gen": "^1.0.3",

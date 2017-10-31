@@ -33,3 +33,4 @@ app.get('/info', info);
 app.get('/search', search);
 
 app.listen(port);
+console.log("Listening on port " + port);

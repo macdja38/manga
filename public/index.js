@@ -1,4 +1,7 @@
 //get info for selected manga
+//TODO: add client-side validation
+//TODO: add loading screen while backend does its thing
+
 
 var getInfo = function() {
     document.getElementById("selectAll").checked = false;
