@@ -10,7 +10,7 @@ module.exports = function (req, res) {
     console.log("Received request to download manga");
     var i = 0;
     Array.from(req.body.chapter).forEach(x => {
-        chnum = req.body.chapter.length - 1;
+        chnum = req.body.chapter.length;
         gin[req.body.downloadSite].images(req.body.downloadName, parseFloat(x))
             .then(x => Promise.all(x)) //resolve all promises
             .then(x => Promise.all(x.map(y => y.value))) //resolves the other all promises
@@ -25,7 +25,10 @@ var download = function (chapter, body, res) {
     console.log("CHNUM", chnum);
     if (chnum === 0) {
         var zipPath = fs.zip(fs.tempDir, function (dir) {
-            res.download(dir, body.downloadName + ".zip");
+            res.download(dir, body.downloadName + ".zip", function (err) {
+                if (err) console.log(err);
+                fs.remove(fs.tempDir);
+            });
         });
 
         //TODO: send zip to client

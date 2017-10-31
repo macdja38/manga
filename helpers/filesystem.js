@@ -1,4 +1,4 @@
-var fs = require('fs');
+var fs = require('fs-extra');
 var path = require('path');
 var rs = require('randomstring');
 var wget = require('wget-improved');
@@ -60,7 +60,7 @@ module.exports = {
 
         archive.on('warning', function(err) {
             if (err.code === 'ENOENT') {
-                // log warning
+                console.assert("ENOENT");
             } else {
                 // throw error
                 throw err;
@@ -78,5 +78,12 @@ module.exports = {
         console.log("Making zip");
 
         archive.finalize();
+    },
+
+    remove: function (dir) {
+        console.log("removing directory");
+        fs.remove(dir, err => {if (err) console.log(err); console.log("Removed directory")});
+        console.log("removing zip");
+        fs.unlink(dir + ".zip", err => {if (err) console.log(err); console.log("Removed zip")});
     }
 };
