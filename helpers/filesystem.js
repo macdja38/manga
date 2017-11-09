@@ -87,3 +87,4 @@ module.exports = {
         fs.unlink(dir + ".zip", err => {if (err) console.log(err); console.log("Removed zip")});
     }
 };
+

@@ -1,39 +1,41 @@
-var gin = require('gin-downloader');
-var Epub = require('epub-comic-gen');
+const DownloadSession = require('../Classes/DownloadSession');
+const Download = require('../Classes/Download');
+const Manga = require('../Classes/Manga');
+const gin = require('gin-downloader');
+const Epub = require('epub-comic-gen');
 
-var chnum = 0;
+let chnum = 0;
 
 //TODO: handle errors (stop execution) when chapter object is empty
 
 module.exports = function (req, res) {
-    //res.sendStatus(200); //TODO: remove artificial 200 status
     console.log("Received request to download manga");
-    var i = 0;
-    Array.from(req.body.chapter).forEach(x => {
-        chnum = req.body.chapter.length;
+    //console.dir(req.body);
+    let array = req.body.chapter.map((x) =>
         gin[req.body.downloadSite].images(req.body.downloadName, parseFloat(x))
             .then(x => Promise.all(x)) //resolve all promises
-            .then(x => Promise.all(x.map(y => y.value))) //resolves the other all promises
-            .then(console.log("Created array of chapter images"))
-            .then(x => { chnum--; download(x, {chapter: req.body.chapter[i++], downloadName: req.body.downloadName, downloadType: req.body.downloadType}, res)})
-            .catch(console.log);
-    });
-};
+            .then(x => Promise.all(x.map(y => y.value))).then(manga => [x, manga]) //resolves the other all promises
+            .catch(console.log)
+    );
+    Promise.all(array)
+        .then(x => {
+            //console.dir(x, { depth: 20 });
+            let root = (() => {
+                let x = __dirname.split('/');
+                x.pop();
+                return x.join('/');
+            })();
 
-var download = function (chapter, body, res) {
-    var fs = require('../helpers/filesystem');
-    console.log("CHNUM", chnum);
-    if (chnum === 0) {
-        var zipPath = fs.zip(fs.tempDir, function (dir) {
-            res.download(dir, body.downloadName + ".zip", function (err) {
-                if (err) console.log(err);
-                fs.remove(fs.tempDir);
+            let ds = new DownloadSession(new Download(new Manga(req.body.downloadSite, req.body.downloadName), x, req.body.downloadType), root);
+
+            ds.download(err => {
+                res.setHeader("Content-Type", "application/" + ((req.body.downloadType === "epub") ? "epub+" : "") + "zip");
+
+                ds.makeFile(res, err => {
+                    if (err) { console.log(err); return; }
+                    ds.removeFiles();
+                });
             });
-        });
-
-        //TODO: send zip to client
-        return;
-    }
-    fs.makeTempDir(fs.tempDir, null, console.log);
-    fs.getChapter(chapter, body);
+        })
+        .catch(console.log);
 };

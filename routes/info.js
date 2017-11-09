@@ -1,4 +1,4 @@
-var gin = require('gin-downloader');
+const gin = require('gin-downloader');
 
 module.exports = function (req, res) {
     gin[req.query.site].infoChapters(req.query.name)
