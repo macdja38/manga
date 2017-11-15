@@ -13,7 +13,7 @@ class Download {
         return this._chapters;
     }
 
-    get type () {
+    get fileType () {
         return this._type;
     }
 }

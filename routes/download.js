@@ -2,9 +2,6 @@ const DownloadSession = require('../Classes/DownloadSession');
 const Download = require('../Classes/Download');
 const Manga = require('../Classes/Manga');
 const gin = require('gin-downloader');
-const Epub = require('epub-comic-gen');
-
-let chnum = 0;
 
 //TODO: handle errors (stop execution) when chapter object is empty
 
@@ -25,15 +22,19 @@ module.exports = function (req, res) {
                 x.pop();
                 return x.join('/');
             })();
+            console.log(root);
 
             let ds = new DownloadSession(new Download(new Manga(req.body.downloadSite, req.body.downloadName), x, req.body.downloadType), root);
 
             ds.download(err => {
-                res.setHeader("Content-Type", "application/" + ((req.body.downloadType === "epub") ? "epub+" : "") + "zip");
+                if (err) { console.log(err) }
+                //res.setHeader("Content-Type", "application/" + ((req.body.downloadType === "epub") ? "epub+" : "") + "zip");
 
+                console.log("Making file");
                 ds.makeFile(res, err => {
                     if (err) { console.log(err); return; }
-                    ds.removeFiles();
+                    console.log("Made file successfully");
+                    //ds.removeFiles();
                 });
             });
         })
