@@ -8,7 +8,9 @@ const gin = require('gin-downloader');
 module.exports = function (req, res) {
     console.log("Received request to download manga");
     //console.dir(req.body);
-    let array = req.body.chapter.map((x) =>
+    let chapters = (typeof req.body.chapter === "string") ? [req.body.chapter] : req.body.chapter;
+    
+    let array = chapters.map((x) =>
         gin[req.body.downloadSite].images(req.body.downloadName, parseFloat(x))
             .then(x => Promise.all(x)) //resolve all promises
             .then(x => Promise.all(x.map(y => y.value))).then(manga => [x, manga]) //resolves the other all promises
