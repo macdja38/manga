@@ -1,13 +1,20 @@
-const rs = require('randomstring');
 const fs = require('fs-extra');
 const wget = require('wget-improved');
 const archiver = require('archiver');
 const Epub = require('epub-comic-gen');
+const util = require('util');
+const realFS = require("fs");
+const makeDir = util.promisify(realFS.mkdir);
 
 class DownloadSession {
     constructor (download, path) {
         this._download = download;
-        this._tempDir = path + "/tmp/" + rs.generate();
+        try {
+            realFS.mkdirSync("./tmp");
+        } catch (e) {
+
+        }
+        this._tempDir = fs.mkdtempSync("./tmp/manga-");
     }
 
     download (callback) {
@@ -29,23 +36,23 @@ class DownloadSession {
         });
     }
 
-    getChapters (callback) {
-        Promise.all(this._download.chapters.map(chapter => {
+    async getChapters(callback) {
+        for (let chapter of this._download.chapters) {
             let path = this._tempDir + "/" + chapter[0];
-            return new Promise(resolve => {
-                this.makeTempDir(path, err => {
-                    if (err) { console.log(err); return; }
-                    chapter[1].forEach(page => {
+            await makeDir(path);
+            const results = chapter[1].map((page, i) => {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
                         wget.download(page.src, path + "/" + page.name)
-                            .on('end', resolve);
-                    });
-                });
+                            .on('end', resolve)
+                            .on('error', console.error);
+                        setTimeout(resolve, 10000);
+                    }, 200*i);
+                })
             });
-        }))
-            .then(x => {
-                callback();
-            })
-            .catch(console.log);
+            await Promise.all(results);
+        }
+        callback();
     }
 
     removeFiles () {
