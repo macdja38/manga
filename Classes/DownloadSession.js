@@ -1,51 +1,47 @@
-const rs = require('randomstring');
 const fs = require('fs-extra');
 const wget = require('wget-improved');
 const archiver = require('archiver');
 const Epub = require('epub-comic-gen');
+const util = require('util');
+const realFS = require("fs");
+const mkdir = util.promisify(realFS.mkdir);
+const mkdtemp = util.promisify(realFS.mkdtemp);
 
 class DownloadSession {
     constructor (download, path) {
         this._download = download;
-        this._tempDir = path + "/tmp/" + rs.generate();
     }
 
     download (callback) {
-        this.makeTempDir(this._tempDir, err => {
-            if (err) { console.log(err); return; }
-            this.getChapters(callback);
-        });
-    }
-
-    makeTempDir (path, cb) {
-        fs.mkdir(path, 0o777, function(err) {
-            if (err) {
-                if (err.code == 'EEXIST') cb(null); // ignore the error if the folder already exists
-                else cb(err); // something else went wrong
-            } else {
-                cb(null);
-                console.log("Made directory at " + path);
-            } // successfully created folder
-        });
-    }
-
-    getChapters (callback) {
-        Promise.all(this._download.chapters.map(chapter => {
-            let path = this._tempDir + "/" + chapter[0];
-            return new Promise(resolve => {
-                this.makeTempDir(path, err => {
-                    if (err) { console.log(err); return; }
-                    chapter[1].forEach(page => {
-                        wget.download(page.src, path + "/" + page.name)
-                            .on('end', resolve);
-                    });
-                });
-            });
-        }))
-            .then(x => {
-                callback();
+        return mkdir("./tmp")
+            .catch(() => {
             })
-            .catch(console.log);
+            .then(() => {
+                return mkdtemp("./tmp/manga-")
+            })
+            .then(tempDir => {
+                this._tempDir = tempDir;
+                return this.getChapters(tempDir)
+            })
+            .then(callback);
+    }
+
+    async getChapters(tempDir) {
+        for (let chapter of this._download.chapters) {
+            let path = tempDir + "/" + chapter[0];
+            await mkdir(path);
+            const results = chapter[1].map((page, i) => {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        wget.download(page.src, path + "/" + page.name)
+                            .on('end', resolve)
+                            .on('error', console.error);
+                        setTimeout(resolve, 10000);
+                    }, 200 * i);
+                })
+            });
+            await Promise.all(results);
+        }
     }
 
     removeFiles () {
